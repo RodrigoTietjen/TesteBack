@@ -44,7 +44,7 @@ namespace Vendas
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IMapper autoMapper)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IMapper autoMapper,)
         {
             if (env.IsDevelopment())
             {
@@ -54,6 +54,12 @@ namespace Vendas
             {
                 app.UseHsts();
             }
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetRequiredService<ContextoBanco>();
+                context.Database.Migrate();
+            }
+
 
             autoMapper.ConfigurationProvider.AssertConfigurationIsValid();
             
